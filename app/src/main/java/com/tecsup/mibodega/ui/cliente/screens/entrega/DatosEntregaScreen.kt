@@ -28,8 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tecsup.mibodega.ui.cliente.modelo.MetodosPago
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.CampoTexto
+import com.tecsup.mibodega.ui.componentes.SelectorOpcionUnica
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 
 
@@ -42,6 +44,8 @@ fun DatosEntregaScreen(
     var telefono by remember { mutableStateOf("") }
     var direccion by remember { mutableStateOf("") }
     var referencia by remember { mutableStateOf("") }
+
+    var metodoPago by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -89,13 +93,20 @@ fun DatosEntregaScreen(
 
         Spacer(Modifier.height(28.dp))
 
+        SelectorOpcionUnica(
+            opciones = MetodosPago,
+            seleccionada = metodoPago,
+            onSeleccionar = { metodoPago = it }
+        )
+
+        Spacer(modifier = Modifier.height(130.dp))
 
         BotonPrimario(
             texto = "Continuar pedido",
             onClick = onContinuar
         )
 
-        Spacer(Modifier.height(24.dp))
+
     }
 }
 

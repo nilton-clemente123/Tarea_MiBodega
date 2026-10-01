@@ -45,4 +45,9 @@ val listaProductosFake = listOf(
         categoria = "Bebidas"
     )
 )
+val MetodosPago = listOf(
+    OpcionSeleccion(id = "yape", texto = "Yape"),
+    OpcionSeleccion(id = "tarjeta", texto = "Tarjeta de crédito"),
+    OpcionSeleccion(id = "efectivo", texto = "Efectivo"),
+)
 
