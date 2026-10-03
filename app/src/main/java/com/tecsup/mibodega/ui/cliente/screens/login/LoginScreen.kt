@@ -46,7 +46,8 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 @Composable
 fun LoginScreen(
     onVolver: () -> Unit,
-    onIniciarSesion: (telefono: String, contrasena: String) -> Unit
+    onIniciarSesion: (telefono: String, contrasena: String) -> Unit,
+    error: String? = null
 ) {
     var telefono by remember { mutableStateOf("") }
     var contrasena by remember { mutableStateOf("") }
@@ -96,6 +97,15 @@ fun LoginScreen(
             teclado = KeyboardType.Password,
             ocultarTexto = true
         )
+
+        if (error != null) {
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = error,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
 
         Spacer(Modifier.height(28.dp))
 

@@ -46,10 +46,11 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 @Composable
 fun RegistroScreen(
     onVolver: () -> Unit,
-    onCrearCuenta: (nombre: String, telefono: String, direccion: String, referencia: String) -> Unit
+    onCrearCuenta: (nombre: String, telefono: String, contrasena: String, direccion: String, referencia: String) -> Unit
 ) {
     var nombre by remember { mutableStateOf("") }
     var telefono by remember { mutableStateOf("") }
+    var contrasena by remember { mutableStateOf("") }
     var direccion by remember { mutableStateOf("") }
     var referencia by remember { mutableStateOf("") }
 
@@ -99,6 +100,16 @@ fun RegistroScreen(
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
+            etiqueta = "Contraseña",
+            valor = contrasena,
+            onValorCambia = { contrasena = it },
+            placeholder = "••••••••",
+            teclado = KeyboardType.Password,
+            ocultarTexto = true
+        )
+        Spacer(Modifier.height(16.dp))
+
+        CampoTexto(
             etiqueta = "Dirección de entrega",
             valor = direccion,
             onValorCambia = { direccion = it },
@@ -117,7 +128,7 @@ fun RegistroScreen(
 
         BotonPrimario(
             texto = "Crear cuenta",
-            onClick = { onCrearCuenta(nombre, telefono, direccion, referencia) }
+            onClick = { onCrearCuenta(nombre, telefono, contrasena, direccion, referencia) }
         )
 
         Spacer(Modifier.height(24.dp))
@@ -159,7 +170,7 @@ private fun EncabezadoRegistro(onVolver: () -> Unit) {
 @Composable
 private fun RegistroPreview() {
     BodegaTheme {
-        RegistroScreen(onVolver = {}, onCrearCuenta = { _, _, _, _ -> })
+        RegistroScreen(onVolver = {}, onCrearCuenta = { _, _, _, _, _ -> })
     }
 }
 

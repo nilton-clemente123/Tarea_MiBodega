@@ -15,6 +15,7 @@ import androidx.navigation.navArgument
 import com.tecsup.mibodega.ui.cliente.modelo.COSTO_DELIVERY
 import com.tecsup.mibodega.ui.cliente.modelo.ItemCarrito
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
+import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
@@ -61,6 +62,12 @@ fun ClienteApp() {
     // Datos del pedido ya confirmado, para mostrarlos en Confirmación.
     var pedidoConfirmado by remember { mutableStateOf<PedidoConfirmado?>(null) }
 
+    // Usuarios registrados en memoria (mock: se pierden al cerrar la app).
+    var usuarios by remember { mutableStateOf<List<Usuario>>(emptyList()) }
+
+    // Mensaje de error del login (null = sin error).
+    var errorLogin by remember { mutableStateOf<String?>(null) }
+
     NavHost(
         navController = navController,
         startDestination = Rutas.BIENVENIDA
@@ -68,7 +75,10 @@ fun ClienteApp() {
         composable(Rutas.BIENVENIDA) {
             BienvenidaScreen(
                 onRegistrarse = { navController.navigate(Rutas.REGISTRO) },
-                onIniciarSesion = { navController.navigate(Rutas.LOGIN) },
+                onIniciarSesion = {
+                    errorLogin = null
+                    navController.navigate(Rutas.LOGIN)
+                },
                 onTerminos = { navController.navigate(Rutas.TERMINOS) }
             )
         }
@@ -82,8 +92,14 @@ fun ClienteApp() {
         composable(Rutas.REGISTRO) {
             RegistroScreen(
                 onVolver = { navController.popBackStack() },
-                onCrearCuenta = { nombre, telefono, direccion, referencia ->
-                    // TODO: guardar estos datos cuando exista el registro real
+                onCrearCuenta = { nombre, telefono, contrasena, direccion, referencia ->
+                    usuarios = usuarios + Usuario(
+                        nombre = nombre,
+                        telefono = telefono,
+                        contrasena = contrasena,
+                        direccion = direccion,
+                        referencia = referencia
+                    )
                     navController.navigate(Rutas.INICIO) {
                         popUpTo(Rutas.BIENVENIDA) { inclusive = true }
                     }
@@ -95,11 +111,19 @@ fun ClienteApp() {
             LoginScreen(
                 onVolver = { navController.popBackStack() },
                 onIniciarSesion = { telefono, contrasena ->
-                    // TODO: validar credenciales cuando exista un login real
-                    navController.navigate(Rutas.INICIO) {
-                        popUpTo(Rutas.BIENVENIDA) { inclusive = true }
+                    val usuario = usuarios.find {
+                        it.telefono == telefono && it.contrasena == contrasena
                     }
-                }
+                    if (usuario != null) {
+                        errorLogin = null
+                        navController.navigate(Rutas.INICIO) {
+                            popUpTo(Rutas.BIENVENIDA) { inclusive = true }
+                        }
+                    } else {
+                        errorLogin = "Teléfono o contraseña incorrectos"
+                    }
+                },
+                error = errorLogin
             )
         }
 
