@@ -21,6 +21,7 @@ import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
 import com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
 import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
+import com.tecsup.mibodega.ui.cliente.screens.estado.EstadoPedidoScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
 import com.tecsup.mibodega.ui.cliente.screens.login.LoginScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
@@ -45,6 +46,7 @@ private object Rutas {
 
     const val DATOSENTREGA = "datosEntrega"
     const val CONFIRMACION = "confirmacion"
+    const val ESTADO_PEDIDO = "estadoPedido"
 
     fun detalle(productoId: Int) = "detalle/$productoId"
 }
@@ -182,7 +184,22 @@ fun ClienteApp() {
                     numeroPedido = pedido.numero,
                     total = pedido.total,
                     direccion = pedido.direccion,
-                    onVerEstadoPedido = { /* TODO: pantalla de estado del pedido */ },
+                    onVerEstadoPedido = { navController.navigate(Rutas.ESTADO_PEDIDO) },
+                    onVolverInicio = {
+                        carrito = emptyList()
+                        navController.popBackStack(Rutas.INICIO, inclusive = false)
+                    }
+                )
+            }
+        }
+
+        composable(Rutas.ESTADO_PEDIDO) {
+            val pedido = pedidoConfirmado
+            if (pedido != null) {
+                EstadoPedidoScreen(
+                    numeroPedido = pedido.numero,
+                    direccion = pedido.direccion,
+                    onVolver = { navController.popBackStack() },
                     onVolverInicio = {
                         carrito = emptyList()
                         navController.popBackStack(Rutas.INICIO, inclusive = false)
