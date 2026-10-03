@@ -68,6 +68,9 @@ fun ClienteApp() {
     // Mensaje de error del login (null = sin error).
     var errorLogin by remember { mutableStateOf<String?>(null) }
 
+    // IDs de productos marcados como favoritos.
+    var favoritos by remember { mutableStateOf<Set<Int>>(emptySet()) }
+
     NavHost(
         navController = navController,
         startDestination = Rutas.BIENVENIDA
@@ -149,10 +152,18 @@ fun ClienteApp() {
 
             DetalleProductoScreen(
                 producto = producto,
+                esFavorito = producto.id in favoritos,
                 onVolver = { navController.popBackStack() },
                 onAgregarAlCarrito = { productoSeleccionado, cantidad ->
                     carrito = agregarOSumarProducto(carrito, productoSeleccionado, cantidad)
                     navController.popBackStack()
+                },
+                onToggleFavorito = {
+                    favoritos = if (producto.id in favoritos) {
+                        favoritos - producto.id
+                    } else {
+                        favoritos + producto.id
+                    }
                 }
             )
         }

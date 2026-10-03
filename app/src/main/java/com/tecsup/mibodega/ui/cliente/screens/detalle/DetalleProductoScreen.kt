@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.ShoppingBasket
 import androidx.compose.material3.Icon
@@ -50,8 +51,10 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 @Composable
 fun DetalleProductoScreen(
     producto: Producto,
+    esFavorito: Boolean,
     onVolver: () -> Unit,
-    onAgregarAlCarrito: (Producto, Int) -> Unit
+    onAgregarAlCarrito: (Producto, Int) -> Unit,
+    onToggleFavorito: () -> Unit
 ) {
     var cantidad by remember { mutableStateOf(1) }
 
@@ -60,7 +63,11 @@ fun DetalleProductoScreen(
             .fillMaxSize()
             .safeDrawingPadding()
     ) {
-        EncabezadoDetalle(onVolver = onVolver)
+        EncabezadoDetalle(
+            onVolver = onVolver,
+            esFavorito = esFavorito,
+            onToggleFavorito = onToggleFavorito
+        )
 
         ImagenProducto()
 
@@ -113,7 +120,11 @@ fun DetalleProductoScreen(
 }
 
 @Composable
-private fun EncabezadoDetalle(onVolver: () -> Unit) {
+private fun EncabezadoDetalle(
+    onVolver: () -> Unit,
+    esFavorito: Boolean,
+    onToggleFavorito: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,8 +135,12 @@ private fun EncabezadoDetalle(onVolver: () -> Unit) {
         IconButton(onClick = onVolver) {
             Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
         }
-        IconButton(onClick = { /* TODO: guardar como favorito */ }) {
-            Icon(Icons.Default.FavoriteBorder, contentDescription = "Favorito")
+        IconButton(onClick = onToggleFavorito) {
+            Icon(
+                imageVector = if (esFavorito) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                contentDescription = if (esFavorito) "Quitar de favoritos" else "Agregar a favoritos",
+                tint = if (esFavorito) RojoPrecio else MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
@@ -156,8 +171,10 @@ private fun DetalleProductoPreview() {
     BodegaTheme {
         DetalleProductoScreen(
             producto = listaProductosFake.first { it.nombre == "Coca-Cola Original" },
+            esFavorito = false,
             onVolver = {},
-            onAgregarAlCarrito = { _, _ -> }
+            onAgregarAlCarrito = { _, _ -> },
+            onToggleFavorito = {}
         )
     }
 }
