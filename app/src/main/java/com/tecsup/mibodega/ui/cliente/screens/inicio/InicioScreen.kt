@@ -1,14 +1,18 @@
 package com.tecsup.mibodega.ui.cliente.screens.inicio
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -41,10 +45,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tecsup.mibodega.R
+import com.tecsup.mibodega.ui.cliente.modelo.Categoria
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
 import com.tecsup.mibodega.ui.cliente.modelo.listaCategorias
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
@@ -74,7 +84,7 @@ fun InicioScreen(
     var textoBusqueda by remember { mutableStateOf("") }
 
     val productosFiltrados = productos.filter { producto ->
-        val coincideCategoria = categoriaSeleccionada == "Todos" || producto.categoria == categoriaSeleccionada
+        val coincideCategoria = categoriaSeleccionada.nombre == "Todos" || producto.categoria == categoriaSeleccionada.nombre
         val coincideBusqueda = producto.nombre.contains(textoBusqueda, ignoreCase = true)
         coincideCategoria && coincideBusqueda
     }
@@ -136,7 +146,7 @@ fun InicioScreen(
             ) {
                 items(listaCategorias) { categoria ->
                     ChipCategoria(
-                        texto = categoria,
+                        categoria = categoria,
                         seleccionado = categoria == categoriaSeleccionada,
                         onClick = { categoriaSeleccionada = categoria }
                     )
@@ -166,20 +176,35 @@ fun InicioScreen(
 
 @Composable
 private fun ChipCategoria(
-    texto: String,
+    categoria: Categoria,
     seleccionado: Boolean,
     onClick: () -> Unit
 ) {
     val fondo = if (seleccionado) VerdeBodega else GrisClaro
     val contenido = if (seleccionado) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
 
-    Row(
+    Column(
         modifier = Modifier
             .background(fondo, RoundedCornerShape(20.dp))
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .padding(horizontal = 14.dp, vertical = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = texto, color = contenido, fontWeight = FontWeight.Medium)
+        Image(
+            painter = painterResource(categoria.imagen),
+            contentDescription = categoria.nombre,
+            modifier = Modifier
+                .size(36.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
+        Spacer(Modifier.height(6.dp))
+        Text(
+            text = categoria.nombre,
+            style = MaterialTheme.typography.bodySmall,
+            color = contenido,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
