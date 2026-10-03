@@ -24,6 +24,7 @@ import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
 import com.tecsup.mibodega.ui.cliente.screens.login.LoginScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
+import com.tecsup.mibodega.ui.cliente.screens.terminos.TerminosCondicionesScreen
 
 /**
  * "Director de orquesta" de la app cliente:
@@ -37,6 +38,7 @@ private object Rutas {
     const val BIENVENIDA = "bienvenida"
     const val REGISTRO = "registro"
     const val LOGIN = "login"
+    const val TERMINOS = "terminos"
     const val INICIO = "inicio"
     const val DETALLE = "detalle/{productoId}"
     const val CARRITO = "carrito"
@@ -65,7 +67,13 @@ fun ClienteApp() {
             BienvenidaScreen(
                 onRegistrarse = { navController.navigate(Rutas.REGISTRO) },
                 onIniciarSesion = { navController.navigate(Rutas.LOGIN) },
-                onTerminos = { /* TODO: abrir términos y condiciones */ }
+                onTerminos = { navController.navigate(Rutas.TERMINOS) }
+            )
+        }
+
+        composable(Rutas.TERMINOS) {
+            TerminosCondicionesScreen(
+                onVolver = { navController.popBackStack() }
             )
         }
 
