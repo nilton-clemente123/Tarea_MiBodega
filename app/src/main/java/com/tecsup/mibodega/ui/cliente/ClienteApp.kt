@@ -6,16 +6,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import kotlin.random.Random
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.tecsup.mibodega.ui.cliente.modelo.COSTO_DELIVERY
 import com.tecsup.mibodega.ui.cliente.modelo.ItemCarrito
 import com.tecsup.mibodega.ui.cliente.modelo.Producto
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
+import com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
 import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
@@ -37,6 +40,7 @@ private object Rutas {
     const val CARRITO = "carrito"
 
     const val DATOSENTREGA = "datosEntrega"
+    const val CONFIRMACION = "confirmacion"
 
     fun detalle(productoId: Int) = "detalle/$productoId"
 }
@@ -47,6 +51,9 @@ fun ClienteApp() {
 
     // El carrito vive aquí arriba, no en ninguna Screen.
     var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
+
+    // Datos del pedido ya confirmado, para mostrarlos en Confirmación.
+    var pedidoConfirmado by remember { mutableStateOf<PedidoConfirmado?>(null) }
 
     NavHost(
         navController = navController,
@@ -135,12 +142,31 @@ fun ClienteApp() {
                 onVolver = {
                     navController.popBackStack()
                 },
-
-                onContinuar = {
-                        //PARA EL PROXIMO COMMIT
+                onContinuar = { direccion ->
+                    pedidoConfirmado = PedidoConfirmado(
+                        numero = generarNumeroPedido(),
+                        total = carrito.sumOf { it.producto.precio * it.cantidad } + COSTO_DELIVERY,
+                        direccion = direccion
+                    )
+                    navController.navigate(Rutas.CONFIRMACION)
                 }
-
             )
+        }
+
+        composable(Rutas.CONFIRMACION) {
+            val pedido = pedidoConfirmado
+            if (pedido != null) {
+                ConfirmacionScreen(
+                    numeroPedido = pedido.numero,
+                    total = pedido.total,
+                    direccion = pedido.direccion,
+                    onVerEstadoPedido = { /* TODO: pantalla de estado del pedido */ },
+                    onVolverInicio = {
+                        carrito = emptyList()
+                        navController.popBackStack(Rutas.INICIO, inclusive = false)
+                    }
+                )
+            }
         }
     }
 }
@@ -163,3 +189,12 @@ private fun agregarOSumarProducto(
         carrito + ItemCarrito(producto = producto, cantidad = cantidad)
     }
 }
+
+private data class PedidoConfirmado(
+    val numero: String,
+    val total: Double,
+    val direccion: String
+)
+
+private fun generarNumeroPedido(): String =
+    "#%05d".format(Random.nextInt(100000))

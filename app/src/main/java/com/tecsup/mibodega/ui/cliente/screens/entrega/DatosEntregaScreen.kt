@@ -38,7 +38,7 @@ import com.tecsup.mibodega.ui.theme.BodegaTheme
 @Composable
 fun DatosEntregaScreen(
     onVolver: () -> Unit,
-    onContinuar: () -> Unit
+    onContinuar: (direccion: String) -> Unit
 ) {
     var nombre by remember { mutableStateOf("") }
     var telefono by remember { mutableStateOf("") }
@@ -103,7 +103,7 @@ fun DatosEntregaScreen(
 
         BotonPrimario(
             texto = "Continuar pedido",
-            onClick = onContinuar
+            onClick = { onContinuar(direccion) }
         )
 
 
