@@ -19,12 +19,15 @@ import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.cliente.screens.bienvenida.BienvenidaScreen
 import com.tecsup.mibodega.ui.cliente.screens.carrito.CarritoScreen
+import com.tecsup.mibodega.ui.cliente.screens.categorias.CategoriasScreen
 import com.tecsup.mibodega.ui.cliente.screens.confirmacion.ConfirmacionScreen
 import com.tecsup.mibodega.ui.cliente.screens.detalle.DetalleProductoScreen
 import com.tecsup.mibodega.ui.cliente.screens.entrega.DatosEntregaScreen
 import com.tecsup.mibodega.ui.cliente.screens.estado.EstadoPedidoScreen
 import com.tecsup.mibodega.ui.cliente.screens.inicio.InicioScreen
 import com.tecsup.mibodega.ui.cliente.screens.login.LoginScreen
+import com.tecsup.mibodega.ui.cliente.screens.pedidos.PedidosScreen
+import com.tecsup.mibodega.ui.cliente.screens.perfil.PerfilScreen
 import com.tecsup.mibodega.ui.cliente.screens.registro.RegistroScreen
 import com.tecsup.mibodega.ui.cliente.screens.terminos.TerminosCondicionesScreen
 
@@ -42,6 +45,9 @@ private object Rutas {
     const val LOGIN = "login"
     const val TERMINOS = "terminos"
     const val INICIO = "inicio"
+    const val CATEGORIAS = "categorias"
+    const val PEDIDOS = "pedidos"
+    const val PERFIL = "perfil"
     const val DETALLE = "detalle/{productoId}"
     const val CARRITO = "carrito"
 
@@ -70,6 +76,20 @@ fun ClienteApp() {
 
     // IDs de productos marcados como favoritos.
     var favoritos by remember { mutableStateOf<Set<Int>>(emptySet()) }
+
+    // Navegación entre las pestañas del bottom bar.
+    val navegarPestana: (Int) -> Unit = { indice ->
+        val ruta = when (indice) {
+            1 -> Rutas.CATEGORIAS
+            2 -> Rutas.PEDIDOS
+            3 -> Rutas.PERFIL
+            else -> Rutas.INICIO
+        }
+        navController.navigate(ruta) {
+            popUpTo(Rutas.INICIO) { inclusive = false }
+            launchSingleTop = true
+        }
+    }
 
     NavHost(
         navController = navController,
@@ -139,7 +159,29 @@ fun ClienteApp() {
                 },
                 onAgregarProducto = { producto ->
                     carrito = agregarOSumarProducto(carrito, producto, 1)
-                }
+                },
+                onNavegarPestana = navegarPestana
+            )
+        }
+
+        composable(Rutas.CATEGORIAS) {
+            CategoriasScreen(
+                onVerCarrito = { navController.navigate(Rutas.CARRITO) },
+                onNavegarPestana = navegarPestana
+            )
+        }
+
+        composable(Rutas.PEDIDOS) {
+            PedidosScreen(
+                onVerCarrito = { navController.navigate(Rutas.CARRITO) },
+                onNavegarPestana = navegarPestana
+            )
+        }
+
+        composable(Rutas.PERFIL) {
+            PerfilScreen(
+                onVerCarrito = { navController.navigate(Rutas.CARRITO) },
+                onNavegarPestana = navegarPestana
             )
         }
 
