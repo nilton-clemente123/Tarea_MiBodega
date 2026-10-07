@@ -1,6 +1,8 @@
 package com.tecsup.mibodega.ui.cliente.screens.carrito
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +25,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,6 +44,7 @@ import com.tecsup.mibodega.ui.cliente.modelo.listaProductosFake
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.componentes.SelectorCantidad
 import com.tecsup.mibodega.ui.theme.BodegaTheme
+import com.tecsup.mibodega.ui.theme.GrisBorde
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
@@ -50,6 +55,8 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 @Composable
 fun CarritoScreen(
     carrito: List<ItemCarrito>,
+    esDelivery: Boolean,
+    onCambiarEsDelivery: (Boolean) -> Unit,
     onVolver: () -> Unit,
     onIncrementar: (Producto) -> Unit,
     onDecrementar: (Producto) -> Unit,
@@ -57,11 +64,13 @@ fun CarritoScreen(
     onContinuarPedido: () -> Unit
 ) {
     val subtotal = carrito.sumOf { it.producto.precio * it.cantidad }
-    val total = subtotal + COSTO_DELIVERY
+    val costoDelivery = if (esDelivery) COSTO_DELIVERY else 0.0
+    val total = subtotal + costoDelivery
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .safeDrawingPadding()
     ) {
         EncabezadoCarrito(onVolver = onVolver)
@@ -106,9 +115,14 @@ fun CarritoScreen(
             }
         }
 
+        SelectorTipoEntrega(
+            esDelivery = esDelivery,
+            onCambiarEsDelivery = onCambiarEsDelivery
+        )
+
         ResumenYBoton(
             subtotal = subtotal,
-            delivery = COSTO_DELIVERY,
+            delivery = costoDelivery,
             total = total,
             habilitado = carrito.isNotEmpty(),
             onContinuarPedido = onContinuarPedido
@@ -127,12 +141,13 @@ private fun EncabezadoCarrito(onVolver: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onVolver) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+            Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = MaterialTheme.colorScheme.onBackground)
         }
         Text(
             text = "Mi carrito",
             style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -163,7 +178,8 @@ private fun FilaCarrito(
             Text(
                 text = item.producto.nombre,
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = "S/ %.2f".format(item.producto.precio),
@@ -208,7 +224,8 @@ private fun ResumenYBoton(
         ) {
             Text(
                 text = "Total",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Text(
                 text = "S/ %.2f".format(total),
@@ -240,6 +257,60 @@ private fun FilaResumen(etiqueta: String, valor: Double) {
     }
 }
 
+@Composable
+private fun SelectorTipoEntrega(
+    esDelivery: Boolean,
+    onCambiarEsDelivery: (Boolean) -> Unit
+) {
+    Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+        Text(
+            text = "Tipo de entrega",
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Spacer(Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onCambiarEsDelivery(false) }
+                .padding(vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = !esDelivery,
+                onClick = { onCambiarEsDelivery(false) },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = VerdeBodega,
+                    unselectedColor = GrisBorde
+                )
+            )
+            Spacer(Modifier.width(8.dp))
+            Text("Recojo en tienda", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground)
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onCambiarEsDelivery(true) }
+                .padding(vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RadioButton(
+                selected = esDelivery,
+                onClick = { onCambiarEsDelivery(true) },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = VerdeBodega,
+                    unselectedColor = GrisBorde
+                )
+            )
+            Spacer(Modifier.width(8.dp))
+            Text("Delivery", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground)
+        }
+    }
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun CarritoPreview() {
@@ -251,6 +322,8 @@ private fun CarritoPreview() {
     BodegaTheme {
         CarritoScreen(
             carrito = carritoEjemplo,
+            esDelivery = true,
+            onCambiarEsDelivery = {},
             onVolver = {},
             onIncrementar = {},
             onDecrementar = {},

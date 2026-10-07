@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.componentes.BotonPrimario
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisBorde
-import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
@@ -50,6 +49,7 @@ fun EstadoPedidoScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .safeDrawingPadding()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
@@ -93,17 +93,18 @@ private fun EncabezadoEstado(onVolver: () -> Unit) {
             .fillMaxWidth()
             .padding(top = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(
             onClick = onVolver,
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+            Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = MaterialTheme.colorScheme.onBackground)
         }
         Text(
             text = "Estado del pedido",
             style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.weight(1f, fill = false)
         )
         Spacer(Modifier.size(48.dp)) // balancea el ancho del ícono de la izquierda
@@ -183,7 +184,7 @@ private fun ResumenEstado(tiempoEstimado: String, direccion: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(GrisClaro, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp))
             .padding(20.dp)
     ) {
         DatoEstado(etiqueta = "Tiempo estimado", valor = tiempoEstimado)

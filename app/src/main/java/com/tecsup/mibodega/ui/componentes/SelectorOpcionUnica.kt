@@ -46,7 +46,8 @@ fun SelectorOpcionUnica(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text("Metodo de pago",
-            fontWeight = FontWeight.Bold)
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground)
 
         Spacer(modifier = Modifier.height(20.dp))
 

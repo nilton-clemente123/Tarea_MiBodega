@@ -1,5 +1,6 @@
 package com.tecsup.mibodega.ui.cliente.screens.terminos
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,6 +35,7 @@ fun TerminosCondicionesScreen(onVolver: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .safeDrawingPadding()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
@@ -99,11 +101,12 @@ private fun EncabezadoTerminos(onVolver: () -> Unit) {
             onClick = onVolver,
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+            Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = MaterialTheme.colorScheme.onBackground)
         }
         Text(
             text = "Términos y Condiciones",
             style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.weight(1f, fill = false)
         )
         Spacer(Modifier.size(48.dp)) // balancea el ancho del ícono de la izquierda

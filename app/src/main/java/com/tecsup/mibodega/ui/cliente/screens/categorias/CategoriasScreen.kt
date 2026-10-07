@@ -37,7 +37,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.Categoria
 import com.tecsup.mibodega.ui.cliente.modelo.listaCategorias
 import com.tecsup.mibodega.ui.componentes.BarraInferior
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.GrisClaro
 
 /**
  * Pantalla de categorías (pestaña 1 del bottom bar).
@@ -83,7 +82,7 @@ private fun FilaCategoria(categoria: Categoria) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(GrisClaro, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp))
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

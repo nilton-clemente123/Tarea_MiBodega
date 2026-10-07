@@ -1,7 +1,9 @@
 package com.tecsup.mibodega.ui.cliente.screens.perfil
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +22,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -33,7 +37,6 @@ import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.componentes.BarraInferior
 import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.theme.BodegaTheme
-import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
@@ -44,6 +47,8 @@ import com.tecsup.mibodega.ui.theme.VerdeBodega
 @Composable
 fun PerfilScreen(
     usuario: Usuario?,
+    modoOscuro: Boolean,
+    onCambiarModoOscuro: (Boolean) -> Unit,
     onVerCarrito: () -> Unit,
     onCerrarSesion: () -> Unit,
     onNavegarPestana: (Int) -> Unit
@@ -77,7 +82,7 @@ fun PerfilScreen(
                 tint = VerdeBodega,
                 modifier = Modifier
                     .size(96.dp)
-                    .background(GrisClaro, CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
                     .padding(4.dp)
             )
             Spacer(Modifier.height(16.dp))
@@ -110,6 +115,29 @@ fun PerfilScreen(
                     textAlign = TextAlign.Center
                 )
             }
+
+            Spacer(Modifier.height(24.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onCambiarModoOscuro(!modoOscuro) }
+                    .padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Modo oscuro",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = modoOscuro,
+                    onCheckedChange = onCambiarModoOscuro,
+                    colors = SwitchDefaults.colors(
+                        checkedTrackColor = VerdeBodega
+                    )
+                )
+            }
         }
     }
 }
@@ -122,7 +150,7 @@ private fun TarjetaDatosUsuario(usuario: Usuario) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = GrisClaro)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             FilaDato("Teléfono", usuario.telefono)
@@ -166,6 +194,8 @@ private fun PerfilPreview() {
                 direccion = "Av. Los Olivos 123",
                 referencia = "Frente al parque"
             ),
+            modoOscuro = false,
+            onCambiarModoOscuro = {},
             onVerCarrito = {},
             onCerrarSesion = {},
             onNavegarPestana = {}

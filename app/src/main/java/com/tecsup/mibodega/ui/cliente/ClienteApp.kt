@@ -59,14 +59,23 @@ private object Rutas {
 }
 
 @Composable
-fun ClienteApp() {
+fun ClienteApp(
+    modoOscuro: Boolean,
+    onCambiarModoOscuro: (Boolean) -> Unit
+) {
     val navController = rememberNavController()
 
     // El carrito vive aquí arriba, no en ninguna Screen.
     var carrito by remember { mutableStateOf<List<ItemCarrito>>(emptyList()) }
 
+    // Tipo de entrega: true = delivery, false = recojo en tienda.
+    var esDelivery by remember { mutableStateOf(true) }
+
     // Datos del pedido ya confirmado, para mostrarlos en Confirmación.
     var pedidoConfirmado by remember { mutableStateOf<PedidoConfirmado?>(null) }
+
+    // Lista de pedidos realizados, para mostrarlos en la pestaña "Pedidos".
+    var pedidos by remember { mutableStateOf<List<PedidoConfirmado>>(emptyList()) }
 
     // Usuarios registrados en memoria (mock: se pierden al cerrar la app).
     var usuarios by remember { mutableStateOf<List<Usuario>>(emptyList()) }
@@ -180,6 +189,11 @@ fun ClienteApp() {
 
         composable(Rutas.PEDIDOS) {
             PedidosScreen(
+                pedidos = pedidos,
+                onVerPedido = { pedido ->
+                    pedidoConfirmado = pedido
+                    navController.navigate(Rutas.ESTADO_PEDIDO)
+                },
                 onVerCarrito = { navController.navigate(Rutas.CARRITO) },
                 onNavegarPestana = navegarPestana
             )
@@ -188,6 +202,8 @@ fun ClienteApp() {
         composable(Rutas.PERFIL) {
             PerfilScreen(
                 usuario = usuarioActual,
+                modoOscuro = modoOscuro,
+                onCambiarModoOscuro = onCambiarModoOscuro,
                 onVerCarrito = { navController.navigate(Rutas.CARRITO) },
                 onCerrarSesion = {
                     usuarioActual = null
@@ -229,6 +245,8 @@ fun ClienteApp() {
         composable(Rutas.CARRITO) {
             CarritoScreen(
                 carrito = carrito,
+                esDelivery = esDelivery,
+                onCambiarEsDelivery = { esDelivery = it },
                 onVolver = { navController.popBackStack() },
                 onIncrementar = { producto ->
                     carrito = carrito.map {
@@ -255,16 +273,22 @@ fun ClienteApp() {
 
 
         composable(Rutas.DATOSENTREGA) {
+            val subtotal = carrito.sumOf { it.producto.precio * it.cantidad }
             DatosEntregaScreen(
+                subtotal = subtotal,
+                esDelivery = esDelivery,
                 onVolver = {
                     navController.popBackStack()
                 },
                 onContinuar = { direccion ->
-                    pedidoConfirmado = PedidoConfirmado(
+                    val costoDelivery = if (esDelivery) COSTO_DELIVERY else 0.0
+                    val nuevoPedido = PedidoConfirmado(
                         numero = generarNumeroPedido(),
-                        total = carrito.sumOf { it.producto.precio * it.cantidad } + COSTO_DELIVERY,
+                        total = subtotal + costoDelivery,
                         direccion = direccion
                     )
+                    pedidoConfirmado = nuevoPedido
+                    pedidos = pedidos + nuevoPedido
                     navController.navigate(Rutas.CONFIRMACION)
                 }
             )
@@ -322,7 +346,7 @@ private fun agregarOSumarProducto(
     }
 }
 
-private data class PedidoConfirmado(
+data class PedidoConfirmado(
     val numero: String,
     val total: Double,
     val direccion: String

@@ -1,6 +1,7 @@
 package com.tecsup.mibodega.ui.cliente.screens.detalle
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,6 +58,7 @@ fun DetalleProductoScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .safeDrawingPadding()
     ) {
         EncabezadoDetalle(
@@ -76,7 +78,8 @@ fun DetalleProductoScreen(
 
             Text(
                 text = producto.nombre,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(Modifier.height(4.dp))
@@ -129,7 +132,7 @@ private fun EncabezadoDetalle(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onVolver) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+            Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = MaterialTheme.colorScheme.onBackground)
         }
         IconButton(onClick = onToggleFavorito) {
             Icon(
