@@ -142,7 +142,8 @@ fun InicioScreen(
             )
 
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(25.dp,
+                    Alignment.CenterHorizontally),
                 contentPadding = PaddingValues(vertical = 8.dp)
             ) {
                 items(listaCategorias) { categoria ->

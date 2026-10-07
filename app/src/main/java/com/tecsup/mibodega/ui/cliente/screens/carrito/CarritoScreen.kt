@@ -66,20 +66,43 @@ fun CarritoScreen(
     ) {
         EncabezadoCarrito(onVolver = onVolver)
 
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .padding(horizontal = 20.dp),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            items(carrito, key = { it.producto.id }) { item ->
-                FilaCarrito(
-                    item = item,
-                    onIncrementar = { onIncrementar(item.producto) },
-                    onDecrementar = { onDecrementar(item.producto) },
-                    onEliminar = { onEliminar(item.producto) }
+        if (carrito.isEmpty()) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Tu carrito está vacío",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Agrega productos para continuar",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 20.dp),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(carrito, key = { it.producto.id }) { item ->
+                    FilaCarrito(
+                        item = item,
+                        onIncrementar = { onIncrementar(item.producto) },
+                        onDecrementar = { onDecrementar(item.producto) },
+                        onEliminar = { onEliminar(item.producto) }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                }
             }
         }
 
@@ -87,6 +110,7 @@ fun CarritoScreen(
             subtotal = subtotal,
             delivery = COSTO_DELIVERY,
             total = total,
+            habilitado = carrito.isNotEmpty(),
             onContinuarPedido = onContinuarPedido
         )
     }
@@ -169,6 +193,7 @@ private fun ResumenYBoton(
     subtotal: Double,
     delivery: Double,
     total: Double,
+    habilitado: Boolean,
     onContinuarPedido: () -> Unit
 ) {
     Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
@@ -196,6 +221,7 @@ private fun ResumenYBoton(
 
         BotonPrimario(
             texto = "Continuar pedido",
+            habilitado = habilitado,
             onClick = onContinuarPedido
         )
     }

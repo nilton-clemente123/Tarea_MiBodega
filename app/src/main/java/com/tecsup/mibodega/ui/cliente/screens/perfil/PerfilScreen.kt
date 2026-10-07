@@ -4,13 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,18 +29,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tecsup.mibodega.ui.cliente.modelo.Usuario
 import com.tecsup.mibodega.ui.componentes.BarraInferior
+import com.tecsup.mibodega.ui.componentes.BotonSecundario
 import com.tecsup.mibodega.ui.theme.BodegaTheme
 import com.tecsup.mibodega.ui.theme.GrisClaro
 import com.tecsup.mibodega.ui.theme.VerdeBodega
 
 /**
  * Pantalla de perfil (pestaña 3 del bottom bar).
+ * Muestra los datos del usuario con sesión activa y permite cerrar sesión.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PerfilScreen(
+    usuario: Usuario?,
     onVerCarrito: () -> Unit,
+    onCerrarSesion: () -> Unit,
     onNavegarPestana: (Int) -> Unit
 ) {
     Scaffold(
@@ -72,19 +81,76 @@ fun PerfilScreen(
                     .padding(4.dp)
             )
             Spacer(Modifier.height(16.dp))
-            Text(
-                text = "Invitado",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = "Inicia sesión o regístrate para ver tu perfil",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
+
+            if (usuario != null) {
+                Text(
+                    text = usuario.nombre,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    textAlign = TextAlign.Center
+                )
+                Spacer(Modifier.height(24.dp))
+                TarjetaDatosUsuario(usuario)
+                Spacer(Modifier.height(32.dp))
+                BotonSecundario(
+                    texto = "Cerrar sesión",
+                    onClick = onCerrarSesion
+                )
+            } else {
+                Text(
+                    text = "Invitado",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = "Inicia sesión o regístrate para ver tu perfil",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
+    }
+}
+
+/**
+ * Tarjeta con los datos del usuario (teléfono, dirección y referencia).
+ */
+@Composable
+private fun TarjetaDatosUsuario(usuario: Usuario) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = GrisClaro)
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            FilaDato("Teléfono", usuario.telefono)
+            Spacer(Modifier.height(16.dp))
+            FilaDato("Dirección", usuario.direccion)
+            if (usuario.referencia.isNotBlank()) {
+                Spacer(Modifier.height(16.dp))
+                FilaDato("Referencia", usuario.referencia)
+            }
+        }
+    }
+}
+
+@Composable
+private fun FilaDato(etiqueta: String, valor: String) {
+    Column {
+        Text(
+            text = etiqueta,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(2.dp))
+        Text(
+            text = valor,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
     }
 }
 
@@ -92,6 +158,17 @@ fun PerfilScreen(
 @Composable
 private fun PerfilPreview() {
     BodegaTheme {
-        PerfilScreen(onVerCarrito = {}, onNavegarPestana = {})
+        PerfilScreen(
+            usuario = Usuario(
+                nombre = "Juan Pérez",
+                telefono = "987 654 321",
+                contrasena = "123456",
+                direccion = "Av. Los Olivos 123",
+                referencia = "Frente al parque"
+            ),
+            onVerCarrito = {},
+            onCerrarSesion = {},
+            onNavegarPestana = {}
+        )
     }
 }

@@ -71,6 +71,9 @@ fun ClienteApp() {
     // Usuarios registrados en memoria (mock: se pierden al cerrar la app).
     var usuarios by remember { mutableStateOf<List<Usuario>>(emptyList()) }
 
+    // Usuario con la sesión iniciada (null = nadie ha iniciado sesión).
+    var usuarioActual by remember { mutableStateOf<Usuario?>(null) }
+
     // Mensaje de error del login (null = sin error).
     var errorLogin by remember { mutableStateOf<String?>(null) }
 
@@ -116,13 +119,16 @@ fun ClienteApp() {
             RegistroScreen(
                 onVolver = { navController.popBackStack() },
                 onCrearCuenta = { nombre, telefono, contrasena, direccion, referencia ->
-                    usuarios = usuarios + Usuario(
+                    val nuevoUsuario = Usuario(
                         nombre = nombre,
                         telefono = telefono,
                         contrasena = contrasena,
                         direccion = direccion,
                         referencia = referencia
                     )
+                    usuarios = usuarios + nuevoUsuario
+                    usuarioActual = nuevoUsuario
+                    errorLogin = null
                     navController.navigate(Rutas.INICIO) {
                         popUpTo(Rutas.BIENVENIDA) { inclusive = true }
                     }
@@ -138,6 +144,7 @@ fun ClienteApp() {
                         it.telefono == telefono && it.contrasena == contrasena
                     }
                     if (usuario != null) {
+                        usuarioActual = usuario
                         errorLogin = null
                         navController.navigate(Rutas.INICIO) {
                             popUpTo(Rutas.BIENVENIDA) { inclusive = true }
@@ -180,7 +187,16 @@ fun ClienteApp() {
 
         composable(Rutas.PERFIL) {
             PerfilScreen(
+                usuario = usuarioActual,
                 onVerCarrito = { navController.navigate(Rutas.CARRITO) },
+                onCerrarSesion = {
+                    usuarioActual = null
+                    carrito = emptyList()
+                    errorLogin = null
+                    navController.navigate(Rutas.BIENVENIDA) {
+                        popUpTo(Rutas.INICIO) { inclusive = true }
+                    }
+                },
                 onNavegarPestana = navegarPestana
             )
         }

@@ -47,6 +47,12 @@ fun DatosEntregaScreen(
 
     var metodoPago by remember { mutableStateOf("") }
 
+    var errorNombre by remember { mutableStateOf<String?>(null) }
+    var errorTelefono by remember { mutableStateOf<String?>(null) }
+    var errorDireccion by remember { mutableStateOf<String?>(null) }
+    var errorReferencia by remember { mutableStateOf<String?>(null) }
+    var errorMetodoPago by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,33 +68,49 @@ fun DatosEntregaScreen(
         CampoTexto(
             etiqueta = "Nombre completo",
             valor = nombre,
-            onValorCambia = { nombre = it },
-            placeholder = "Juan Pérez"
+            onValorCambia = {
+                nombre = it
+                errorNombre = null
+            },
+            placeholder = "Juan Pérez",
+            error = errorNombre
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Teléfono",
             valor = telefono,
-            onValorCambia = { telefono = it },
+            onValorCambia = {
+                telefono = it
+                errorTelefono = null
+            },
             placeholder = "987 654 321",
-            teclado = KeyboardType.Phone
+            teclado = KeyboardType.Phone,
+            error = errorTelefono
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Dirección de entrega",
             valor = direccion,
-            onValorCambia = { direccion = it },
-            placeholder = "Av. Los Olivos 123"
+            onValorCambia = {
+                direccion = it
+                errorDireccion = null
+            },
+            placeholder = "Av. Los Olivos 123",
+            error = errorDireccion
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Referencia",
             valor = referencia,
-            onValorCambia = { referencia = it },
-            placeholder = "Frente al parque"
+            onValorCambia = {
+                referencia = it
+                errorReferencia = null
+            },
+            placeholder = "Frente al parque",
+            error = errorReferencia
         )
 
         Spacer(Modifier.height(28.dp))
@@ -96,14 +118,42 @@ fun DatosEntregaScreen(
         SelectorOpcionUnica(
             opciones = MetodosPago,
             seleccionada = metodoPago,
-            onSeleccionar = { metodoPago = it }
+            onSeleccionar = {
+                metodoPago = it
+                errorMetodoPago = null
+            }
         )
+
+        if (errorMetodoPago != null) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = errorMetodoPago ?: "",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
 
         Spacer(modifier = Modifier.height(130.dp))
 
         BotonPrimario(
             texto = "Continuar pedido",
-            onClick = { onContinuar(direccion) }
+            onClick = {
+                val nombreValido = nombre.isNotBlank()
+                val telefonoValido = telefono.isNotBlank()
+                val direccionValida = direccion.isNotBlank()
+                val referenciaValida = referencia.isNotBlank()
+                val metodoPagoValido = metodoPago.isNotBlank()
+
+                errorNombre = if (nombreValido) null else "Ingresa tu nombre completo"
+                errorTelefono = if (telefonoValido) null else "Ingresa tu teléfono"
+                errorDireccion = if (direccionValida) null else "Ingresa tu dirección"
+                errorReferencia = if (referenciaValida) null else "Ingresa una referencia"
+                errorMetodoPago = if (metodoPagoValido) null else "Selecciona un método de pago"
+
+                if (nombreValido && telefonoValido && direccionValida && referenciaValida && metodoPagoValido) {
+                    onContinuar(direccion.trim())
+                }
+            }
         )
 
 

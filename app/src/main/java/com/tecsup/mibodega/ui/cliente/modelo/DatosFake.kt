@@ -57,8 +57,8 @@ val listaProductosFake = listOf(
     )
 )
 val MetodosPago = listOf(
-    OpcionSeleccion(id = "yape", texto = "Yape"),
-    OpcionSeleccion(id = "tarjeta", texto = "Tarjeta de crédito"),
-    OpcionSeleccion(id = "efectivo", texto = "Efectivo"),
+    OpcionSeleccion(id = "yape", texto = "Yape", imagen = R.drawable.yape),
+    OpcionSeleccion(id = "plin", texto = "Plin", imagen = R.drawable.plin),
+    OpcionSeleccion(id = "efectivo", texto = "Efectivo", imagen = R.drawable.efectivo),
 )
 

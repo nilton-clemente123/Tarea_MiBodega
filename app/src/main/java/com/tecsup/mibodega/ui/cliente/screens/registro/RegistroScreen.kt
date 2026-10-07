@@ -54,6 +54,12 @@ fun RegistroScreen(
     var direccion by remember { mutableStateOf("") }
     var referencia by remember { mutableStateOf("") }
 
+    var errorNombre by remember { mutableStateOf<String?>(null) }
+    var errorTelefono by remember { mutableStateOf<String?>(null) }
+    var errorContrasena by remember { mutableStateOf<String?>(null) }
+    var errorDireccion by remember { mutableStateOf<String?>(null) }
+    var errorReferencia by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -85,50 +91,92 @@ fun RegistroScreen(
         CampoTexto(
             etiqueta = "Nombre completo",
             valor = nombre,
-            onValorCambia = { nombre = it },
-            placeholder = "Juan Pérez"
+            onValorCambia = {
+                nombre = it
+                errorNombre = null
+            },
+            placeholder = "Juan Pérez",
+            error = errorNombre
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Teléfono",
             valor = telefono,
-            onValorCambia = { telefono = it },
+            onValorCambia = {
+                telefono = it
+                errorTelefono = null
+            },
             placeholder = "987 654 321",
-            teclado = KeyboardType.Phone
+            teclado = KeyboardType.Phone,
+            error = errorTelefono
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Contraseña",
             valor = contrasena,
-            onValorCambia = { contrasena = it },
+            onValorCambia = {
+                contrasena = it
+                errorContrasena = null
+            },
             placeholder = "••••••••",
             teclado = KeyboardType.Password,
-            ocultarTexto = true
+            ocultarTexto = true,
+            error = errorContrasena
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Dirección de entrega",
             valor = direccion,
-            onValorCambia = { direccion = it },
-            placeholder = "Av. Los Olivos 123"
+            onValorCambia = {
+                direccion = it
+                errorDireccion = null
+            },
+            placeholder = "Av. Los Olivos 123",
+            error = errorDireccion
         )
         Spacer(Modifier.height(16.dp))
 
         CampoTexto(
             etiqueta = "Referencia",
             valor = referencia,
-            onValorCambia = { referencia = it },
-            placeholder = "Frente al parque"
+            onValorCambia = {
+                referencia = it
+                errorReferencia = null
+            },
+            placeholder = "Frente al parque",
+            error = errorReferencia
         )
 
         Spacer(Modifier.height(28.dp))
 
         BotonPrimario(
             texto = "Crear cuenta",
-            onClick = { onCrearCuenta(nombre, telefono, contrasena, direccion, referencia) }
+            onClick = {
+                val nombreValido = nombre.isNotBlank()
+                val telefonoValido = telefono.isNotBlank()
+                val contrasenaValida = contrasena.isNotBlank()
+                val direccionValida = direccion.isNotBlank()
+                val referenciaValida = referencia.isNotBlank()
+
+                errorNombre = if (nombreValido) null else "Ingresa tu nombre completo"
+                errorTelefono = if (telefonoValido) null else "Ingresa tu teléfono"
+                errorContrasena = if (contrasenaValida) null else "Ingresa una contraseña"
+                errorDireccion = if (direccionValida) null else "Ingresa tu dirección"
+                errorReferencia = if (referenciaValida) null else "Ingresa una referencia"
+
+                if (nombreValido && telefonoValido && contrasenaValida && direccionValida && referenciaValida) {
+                    onCrearCuenta(
+                        nombre.trim(),
+                        telefono.trim(),
+                        contrasena,
+                        direccion.trim(),
+                        referencia.trim()
+                    )
+                }
+            }
         )
 
         Spacer(Modifier.height(24.dp))

@@ -2,6 +2,7 @@ package com.tecsup.mibodega.ui.componentes
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +31,8 @@ fun CampoTexto(
     modifier: Modifier = Modifier,
     placeholder: String? = null,
     teclado: KeyboardType = KeyboardType.Text,
-    ocultarTexto: Boolean = false
+    ocultarTexto: Boolean = false,
+    error: String? = null
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -46,6 +48,7 @@ fun CampoTexto(
                 .fillMaxWidth(),
             placeholder = placeholder?.let { { Text(it) } },
             singleLine = true,
+            isError = error != null,
             shape = RoundedCornerShape(10.dp),
             keyboardOptions = KeyboardOptions(keyboardType = teclado),
             visualTransformation = if (ocultarTexto) PasswordVisualTransformation() else VisualTransformation.None,
@@ -56,5 +59,13 @@ fun CampoTexto(
                 focusedBorderColor = MaterialTheme.colorScheme.primary
             )
         )
+        if (error != null) {
+            Text(
+                text = error,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
     }
 }

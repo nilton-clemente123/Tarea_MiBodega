@@ -1,6 +1,6 @@
 package com.tecsup.mibodega.ui.componentes
 
-import android.widget.Space
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Payment
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -20,7 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tecsup.mibodega.ui.cliente.modelo.OpcionSeleccion
@@ -92,11 +89,10 @@ private fun FilaOpcion(
 
         Spacer(Modifier.width(6.dp))
 
-        Icon(
-            imageVector = opcion.icono,
-            contentDescription = null,
-            tint = if (seleccionada) VerdeBodega else MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(24.dp)
+        Image(
+            painter = painterResource(opcion.imagen),
+            contentDescription = opcion.texto,
+            modifier = Modifier.size(28.dp)
         )
 
         Spacer(Modifier.width(12.dp))
